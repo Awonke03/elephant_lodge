@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elephant Lodge | Luxury Safari Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --earth: #2C2416;
+  --bark: #4A3728;
+  --clay: #8B5E3C;
+  --sand: #C9A96E;
+  --dusk: #E8D5B0;
+  --cream: #F7F0E3;
+  --sage: #5C6B4A;
+  --ivory: #FDFAF4;
+  --accent: #B07D3A;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Jost', sans-serif; background: var(--ivory); color: var(--earth); overflow-x: hidden; }
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.1rem 4rem;
+  background: rgba(44,36,22,0.96);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(201,169,110,0.2);
+}
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--sand); letter-spacing: 0.08em; cursor: pointer; }
+.nav-logo span { color: var(--cream); font-style: italic; font-weight: 300; }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links li a { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--dusk); text-decoration: none; cursor: pointer; transition: color 0.3s; padding-bottom: 3px; border-bottom: 1px solid transparent; }
+.nav-links li a:hover { color: var(--sand); }
+.nav-links li a.active { color: var(--sand); border-bottom-color: var(--sand); }
+
+/* PAGE SYSTEM */
+.page { display: none; min-height: 100vh; padding-top: 70px; }
+.page.active { display: block; }
+
+/* SHARED */
+.btn { display: inline-block; padding: 0.85rem 2.2rem; font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; border: none; text-decoration: none; transition: all 0.3s; }
+.btn-primary { background: var(--sand); color: var(--earth); }
+.btn-primary:hover { background: var(--accent); color: var(--cream); }
+.btn-outline { background: transparent; color: var(--cream); border: 1px solid rgba(255,255,255,0.5); }
+.btn-outline:hover { border-color: var(--sand); color: var(--sand); }
+.btn-dark { background: var(--earth); color: var(--sand); }
+.btn-dark:hover { background: var(--bark); }
+.section-eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--clay); display: block; margin-bottom: 0.6rem; }
+.divider { width: 60px; height: 1px; background: var(--sand); margin: 1.2rem 0; }
+
+/* PAGE HERO BANNER */
+.page-hero { min-height: 400px; display: flex; align-items: flex-end; padding: 3.5rem 4rem; background-size: cover; background-position: center; }
+.page-hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 5vw, 4.2rem); font-weight: 300; color: var(--cream); line-height: 1; }
+.page-hero h1 em { font-style: italic; color: var(--sand); }
+.page-hero p { font-size: 0.9rem; color: var(--dusk); margin-top: 0.6rem; font-weight: 300; }
+
+/* FOOTER */
+footer { background: var(--earth); padding: 3.5rem 4rem 0; border-top: 1px solid rgba(201,169,110,0.2); }
+.footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2.5rem; padding-bottom: 2.5rem; }
+.footer-brand h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; color: var(--sand); font-weight: 400; margin-bottom: 0.8rem; }
+.footer-brand p { font-size: 0.82rem; color: var(--dusk); line-height: 1.75; font-weight: 300; max-width: 240px; }
+.footer-col h4 { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 1rem; }
+.footer-col ul { list-style: none; }
+.footer-col li { font-size: 0.84rem; color: var(--dusk); padding: 0.28rem 0; cursor: pointer; font-weight: 300; transition: color 0.25s; }
+.footer-col li:hover { color: var(--sand); }
+.footer-bottom { border-top: 1px solid rgba(201,169,110,0.12); padding: 1.2rem 0; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom p { font-size: 0.74rem; color: var(--clay); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--bark); color: var(--sand); padding: 1rem 1.6rem; border-left: 3px solid var(--sand); font-size: 0.84rem; line-height: 1.5; transform: translateX(calc(100% + 3rem)); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); max-width: 300px; }
+.toast.show { transform: translateX(0); }
+
+/* ANIMATIONS */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scrollPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* ============================
+   HOME
+============================ */
+.hero { height: calc(100vh - 70px); min-height: 550px; background: linear-gradient(to bottom, rgba(44,36,22,0.5) 0%, rgba(44,36,22,0.2) 40%, rgba(44,36,22,0.78) 100%), url('https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1600&q=80') center/cover no-repeat; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--cream); position: relative; }
+.hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.35em; text-transform: uppercase; color: var(--sand); margin-bottom: 1.2rem; animation: fadeUp 0.9s ease both; }
+.hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 7vw, 6.5rem); font-weight: 300; line-height: 1.0; animation: fadeUp 0.9s 0.12s ease both; }
+.hero h1 em { font-style: italic; color: var(--sand); }
+.hero-sub { margin-top: 1.2rem; font-size: 1rem; font-weight: 300; color: var(--dusk); letter-spacing: 0.04em; max-width: 480px; animation: fadeUp 0.9s 0.24s ease both; }
+.hero-btns { display: flex; gap: 1rem; margin-top: 2.2rem; animation: fadeUp 0.9s 0.36s ease both; }
+.scroll-hint { position: absolute; bottom: 1.8rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 0.4rem; color: var(--dusk); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; }
+.scroll-line { width: 1px; height: 46px; background: linear-gradient(to bottom, var(--sand), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+
+.home-features { display: grid; grid-template-columns: repeat(3,1fr); background: var(--earth); }
+.feature-card { padding: 3.5rem 2.5rem; text-align: center; border-right: 1px solid rgba(201,169,110,0.15); }
+.feature-card:last-child { border-right: none; }
+.feature-icon { font-size: 2.2rem; margin-bottom: 0.8rem; }
+.feature-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--sand); margin-bottom: 0.6rem; font-weight: 400; }
+.feature-card p { font-size: 0.87rem; color: var(--dusk); line-height: 1.8; font-weight: 300; }
+
+.story-section { display: grid; grid-template-columns: 1fr 1fr; }
+.story-img { min-height: 520px; background: url('https://images.unsplash.com/photo-1549366021-9f761d450615?w=900&q=80') center/cover; }
+.story-text { background: var(--cream); padding: 5rem 4rem; display: flex; flex-direction: column; justify-content: center; }
+.story-text h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; line-height: 1.1; color: var(--earth); margin-bottom: 1.2rem; }
+.story-text p { font-size: 0.93rem; line-height: 1.9; color: var(--bark); font-weight: 300; margin-bottom: 1rem; }
+
+.gallery-strip { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 280px 280px; gap: 3px; background: var(--earth); }
+.gitem { background-size: cover; background-position: center; transition: opacity 0.3s; }
+.gitem:hover { opacity: 0.82; }
+.gitem.tall { grid-row: 1 / 3; }
+.g1 { background-image: url('https://images.unsplash.com/photo-1523805009345-7448845a9e53?w=900&q=80'); }
+.g2 { background-image: url('https://images.unsplash.com/photo-1571019613576-2b22c76fd955?w=600&q=80'); }
+.g3 { background-image: url('https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80'); }
+.g4 { background-image: url('https://images.unsplash.com/photo-1534177616072-ef7dc120449d?w=600&q=80'); }
+.g5 { background-image: url('https://images.unsplash.com/photo-1548366086-7f1b76106622?w=600&q=80'); }
+
+.testimonials { background: var(--bark); padding: 5rem 4rem; text-align: center; }
+.testimonials h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--sand); font-weight: 300; margin-bottom: 3rem; }
+.testi-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+.testi-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,169,110,0.15); padding: 2rem; text-align: left; }
+.testi-card p { font-size: 0.9rem; color: var(--dusk); line-height: 1.8; font-style: italic; font-weight: 300; }
+.testi-author { margin-top: 1.2rem; font-size: 0.78rem; letter-spacing: 0.1em; color: var(--sand); text-transform: uppercase; }
+.stars { color: var(--sand); font-size: 0.8rem; margin-bottom: 0.7rem; }
+
+/* ============================
+   ABOUT
+============================ */
+.about-hero-bg { background-image: linear-gradient(to bottom, rgba(44,36,22,0.55), rgba(44,36,22,0.65)), url('https://images.unsplash.com/photo-1474118448444-37734cec87c4?w=1600&q=80'); }
+
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.about-block { padding: 4rem; border-bottom: 1px solid rgba(74,55,40,0.12); border-right: 1px solid rgba(74,55,40,0.12); }
+.about-block:nth-child(2n) { border-right: none; }
+.about-block h3 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--clay); margin-bottom: 1rem; font-weight: 400; }
+.about-block p { font-size: 0.91rem; line-height: 1.85; color: var(--bark); font-weight: 300; }
+.about-block p + p { margin-top: 0.8rem; }
+
+.mission-band { background: var(--earth); padding: 5rem 4rem; display: grid; grid-template-columns: 1fr 1.6fr; gap: 4rem; align-items: center; }
+.mission-band h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; color: var(--sand); font-weight: 300; font-style: italic; line-height: 1.2; }
+.mission-band p { color: var(--dusk); font-size: 0.93rem; line-height: 1.9; font-weight: 300; }
+.mission-band p + p { margin-top: 0.9rem; }
+
+.values-strip { display: grid; grid-template-columns: repeat(4,1fr); background: var(--bark); }
+.value-item { padding: 3rem 2rem; text-align: center; border-right: 1px solid rgba(201,169,110,0.15); }
+.value-item:last-child { border-right: none; }
+.value-num { display: block; font-family: 'Cormorant Garamond', serif; font-size: 3.2rem; color: var(--sand); line-height: 1; }
+.value-item p { font-size: 0.81rem; color: var(--dusk); margin-top: 0.4rem; }
+
+.team-section { padding: 5rem 4rem; background: var(--cream); text-align: center; }
+.team-section h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 300; color: var(--earth); margin-bottom: 3rem; }
+.team-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2.5rem; }
+.team-card { text-align: center; }
+.team-avatar { width: 110px; height: 110px; border-radius: 50%; background-size: cover; background-position: center; margin: 0 auto 1rem; border: 3px solid var(--sand); }
+.team-card h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; color: var(--earth); }
+.team-card span { font-size: 0.76rem; color: var(--clay); letter-spacing: 0.1em; text-transform: uppercase; }
+.team-card p { font-size: 0.84rem; color: var(--bark); margin-top: 0.7rem; line-height: 1.7; font-weight: 300; }
+
+/* ============================
+   SERVICES
+============================ */
+.services-hero-bg { background-image: linear-gradient(to bottom, rgba(44,36,22,0.5), rgba(44,36,22,0.68)), url('https://images.unsplash.com/photo-1516426122078-c23e76319801?w=1600&q=80'); background-position: center 30%; }
+
+.accommodation-section { padding: 5rem 4rem; background: var(--ivory); }
+.section-header { margin-bottom: 2.5rem; }
+.section-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; font-weight: 300; color: var(--earth); }
+.section-header p { font-size: 0.91rem; color: var(--bark); margin-top: 0.4rem; font-weight: 300; }
+
+.acc-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+.acc-card { border: 1px solid rgba(74,55,40,0.15); overflow: hidden; background: white; transition: transform 0.3s, box-shadow 0.3s; }
+.acc-card:hover { transform: translateY(-5px); box-shadow: 0 18px 45px rgba(44,36,22,0.13); }
+.acc-img { height: 220px; background-size: cover; background-position: center; }
+.acc-img-1 { background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80'); }
+.acc-img-2 { background-image: url('https://images.unsplash.com/photo-1599619585752-c3edb42a414c?w=600&q=80'); }
+.acc-img-3 { background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80'); }
+.acc-body { padding: 1.8rem; }
+.acc-body h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--earth); }
+.acc-tag { display: inline-block; margin-top: 0.35rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); border-bottom: 1px solid var(--sand); padding-bottom: 2px; }
+.acc-body p { font-size: 0.85rem; line-height: 1.8; color: var(--bark); margin-top: 0.7rem; font-weight: 300; }
+.price-tag { display: flex; align-items: baseline; gap: 0.3rem; margin-top: 1.2rem; }
+.price-amount { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--earth); }
+.price-unit { font-size: 0.77rem; color: var(--clay); }
+.acc-note { font-size: 0.79rem; color: var(--clay); margin-top: 1.5rem; }
+
+.safari-section { background: var(--earth); padding: 5rem 4rem; }
+.safari-section .section-header h2 { color: var(--sand); }
+.safari-section .section-header p { color: var(--dusk); }
+.safari-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 2rem; margin-top: 2rem; }
+.safari-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(201,169,110,0.2); padding: 2.5rem; position: relative; transition: background 0.3s; }
+.safari-card:hover { background: rgba(201,169,110,0.08); }
+.safari-badge { position: absolute; top: 1.4rem; right: 1.4rem; background: var(--sand); color: var(--earth); font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; padding: 0.28rem 0.7rem; }
+.safari-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; color: var(--sand); }
+.safari-duration { display: block; font-size: 0.73rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); margin-top: 0.25rem; }
+.safari-card p { font-size: 0.87rem; line-height: 1.8; color: var(--dusk); margin-top: 0.9rem; font-weight: 300; }
+.safari-includes { margin-top: 1.2rem; list-style: none; }
+.safari-includes li { font-size: 0.82rem; color: var(--sand); padding: 0.3rem 0; border-bottom: 1px solid rgba(201,169,110,0.1); }
+.safari-includes li::before { content: '✦  '; font-size: 0.58rem; }
+.safari-price { margin-top: 1.4rem; }
+.safari-price .price-amount { color: var(--sand); font-size: 2.1rem; }
+.safari-price .price-unit { color: var(--clay); }
+
+.pricing-table-wrap { padding: 5rem 4rem; background: var(--cream); }
+.pricing-table-wrap h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 300; color: var(--earth); margin-bottom: 0.4rem; }
+table { width: 100%; border-collapse: collapse; margin-top: 1.8rem; font-size: 0.87rem; }
+thead tr { background: var(--earth); }
+thead th { padding: 1rem 1.4rem; text-align: left; color: var(--sand); font-weight: 400; letter-spacing: 0.08em; font-size: 0.76rem; text-transform: uppercase; }
+tbody tr { border-bottom: 1px solid rgba(74,55,40,0.1); }
+tbody tr:nth-child(even) { background: rgba(201,169,110,0.06); }
+tbody td { padding: 0.9rem 1.4rem; color: var(--bark); vertical-align: middle; }
+tbody td:first-child { font-weight: 500; color: var(--earth); }
+.tag-incl { display: inline-block; background: rgba(92,107,74,0.13); color: var(--sage); font-size: 0.69rem; padding: 0.18rem 0.55rem; letter-spacing: 0.08em; margin: 2px; }
+
+/* ============================
+   CONTACT
+============================ */
+.contact-hero-bg { background-image: linear-gradient(to bottom, rgba(44,36,22,0.65), rgba(44,36,22,0.6)), url('https://images.unsplash.com/photo-1504432842672-1a79f78e4084?w=1600&q=80'); }
+
+.contact-body { display: grid; grid-template-columns: 1fr 1fr; }
+.contact-info { background: var(--earth); padding: 4rem; }
+.contact-info h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--sand); font-weight: 300; margin-bottom: 2.2rem; }
+.info-block { margin-bottom: 1.8rem; padding-bottom: 1.8rem; border-bottom: 1px solid rgba(201,169,110,0.15); }
+.info-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.info-label { font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sand); margin-bottom: 0.55rem; display: block; }
+.info-block p { font-size: 0.88rem; color: var(--dusk); line-height: 1.75; font-weight: 300; }
+.hours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 1.5rem; }
+.hours-grid .day { font-size: 0.85rem; color: var(--sand); font-weight: 400; }
+.hours-grid .time { font-size: 0.85rem; color: var(--dusk); }
+.hours-note { font-size: 0.78rem; color: var(--clay); margin-top: 0.6rem; font-style: italic; }
+
+.contact-form-wrap { background: var(--ivory); padding: 4rem; }
+.contact-form-wrap h2 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--earth); font-weight: 300; margin-bottom: 1.8rem; }
+.form-group { margin-bottom: 1.4rem; }
+.form-group label { display: block; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.45rem; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.8rem 1rem; border: 1px solid rgba(74,55,40,0.22); background: white; font-family: 'Jost', sans-serif; font-size: 0.88rem; color: var(--earth); outline: none; transition: border-color 0.3s; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--sand); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group textarea { height: 115px; resize: vertical; }
+.form-submit { width: 100%; padding: 1rem; background: var(--earth); color: var(--sand); border: none; font-family: 'Jost', sans-serif; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: background 0.3s; margin-top: 0.4rem; }
+.form-submit:hover { background: var(--bark); }
+
+.map-section { height: 320px; background: linear-gradient(rgba(44,36,22,0.45), rgba(44,36,22,0.45)), url('https://images.unsplash.com/photo-1548777123-e216912df7d8?w=1600&q=80') center/cover; display: flex; align-items: center; justify-content: center; }
+.map-pin-card { background: var(--earth); color: var(--sand); padding: 1.5rem 2.5rem; text-align: center; border: 1px solid rgba(201,169,110,0.3); }
+.map-pin-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: var(--sand); font-weight: 400; margin-bottom: 0.4rem; }
+.map-pin-card p { font-size: 0.86rem; color: var(--dusk); line-height: 1.6; }
+.map-pin-card small { font-size: 0.75rem; color: var(--clay); display: block; margin-top: 0.4rem; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 1rem 1.5rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links li a { font-size: 0.7rem; }
+  .page-hero { padding: 2.5rem 1.5rem; }
+  .home-features, .story-section, .about-grid, .team-grid, .values-strip, .acc-grid, .safari-grid, .contact-body, .footer-inner, .testi-grid { grid-template-columns: 1fr; }
+  .mission-band { grid-template-columns: 1fr; padding: 3rem 1.5rem; gap: 2rem; }
+  .gallery-strip { grid-template-columns: 1fr 1fr; grid-template-rows: 200px 200px 200px; }
+  .gitem.tall { grid-row: auto; }
+  .about-block { border-right: none; }
+  .accommodation-section, .safari-section, .pricing-table-wrap, .contact-info, .contact-form-wrap, .team-section, .testimonials { padding: 3rem 1.5rem; }
+  .story-text { padding: 3rem 1.5rem; }
+  .hero-btns { flex-direction: column; align-items: center; }
+  .form-row { grid-template-columns: 1fr; }
+  footer { padding: 3rem 1.5rem 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Elephant <span>Lodge</span></div>
+  <ul class="nav-links">
+    <li><a id="nav-home" onclick="showPage('home')" class="active">Home</a></li>
+    <li><a id="nav-about" onclick="showPage('about')">About Us</a></li>
+    <li><a id="nav-services" onclick="showPage('services')">Experiences</a></li>
+    <li><a id="nav-contact" onclick="showPage('contact')">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ==================== HOME ==================== -->
+<div id="page-home" class="page active">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Limpopo Valley &middot; South Africa</div>
+    <h1>Where the Wild<br><em>Finds Its Voice</em></h1>
+    <p class="hero-sub">An intimate luxury safari lodge nestled at the heart of elephant country.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showPage('services')">Explore Experiences</button>
+      <button class="btn btn-outline" onclick="showPage('contact')">Plan Your Visit</button>
+    </div>
+    <div class="scroll-hint"><div class="scroll-line"></div>Discover</div>
+  </div>
+
+  <div class="home-features">
+    <div class="feature-card">
+      <div class="feature-icon">&#128024;</div>
+      <h3>Elephant Encounters</h3>
+      <p>Walk alongside Africa's largest land animals guided by our specialist elephant ecologist in their natural habitat.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127807;</div>
+      <h3>Eco-Luxury Stays</h3>
+      <p>Sleep under the stars in sustainably built tented suites designed to minimise our footprint while maximising wonder.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">&#127749;</div>
+      <h3>Sunrise Game Drives</h3>
+      <p>Set out before dawn with expert FGASA-certified rangers as the African bush awakens to a brand new day.</p>
+    </div>
+  </div>
+
+  <div class="story-section">
+    <div class="story-img"></div>
+    <div class="story-text">
+      <span class="section-eyebrow">Our Story</span>
+      <h2>Born from a Love<br>of the Wild</h2>
+      <div class="divider"></div>
+      <p>Elephant Lodge was founded in 2008 by conservationist Amara Dube, who dreamed of a space where guests could connect deeply with nature — without sacrificing comfort or conscience.</p>
+      <p>Situated on 12,000 acres of private reserve bordering the greater Limpopo ecosystem, we share land with over 400 elephants, the Big Five, and hundreds of bird species.</p>
+      <p>Every rand you spend here directly funds our wildlife anti-poaching and habitat restoration programmes.</p>
+      <button class="btn btn-primary" style="margin-top:1.5rem;" onclick="showPage('about')">Learn More About Us &rarr;</button>
+    </div>
+  </div>
+
+  <div class="gallery-strip">
+    <div class="gitem tall g1"></div>
+    <div class="gitem g2"></div>
+    <div class="gitem g3"></div>
+    <div class="gitem g4"></div>
+    <div class="gitem g5"></div>
+  </div>
+
+  <div class="testimonials">
+    <h2>What Our Guests Say</h2>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"Walking with the elephant herd at sunrise was the single most moving experience of my life. The guides' knowledge and passion is truly extraordinary."</p>
+        <div class="testi-author">&mdash; Sarah M., United Kingdom</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"From the river suite to the bush dinners under the stars — every moment was perfectly crafted. Elephant Lodge sets the bar for African safari hospitality."</p>
+        <div class="testi-author">&mdash; David &amp; Priya T., Canada</div>
+      </div>
+      <div class="testi-card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>"Our family spent five nights here and the children still talk about it daily. The private villa and personal guide made this a once-in-a-lifetime trip."</p>
+        <div class="testi-author">&mdash; The Van der Berg Family, Cape Town</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand"><h3>Elephant Lodge</h3><p>A luxury eco-safari experience in the heart of Limpopo Valley. Where the wild finds its voice.</p></div>
+      <div class="footer-col"><h4>Navigate</h4><ul><li onclick="showPage('home')">Home</li><li onclick="showPage('about')">About Us</li><li onclick="showPage('services')">Experiences</li><li onclick="showPage('contact')">Contact</li></ul></div>
+      <div class="footer-col"><h4>Experiences</h4><ul><li>Big Five Game Drive</li><li>Elephant Encounter</li><li>Bush Walk &amp; Tracking</li><li>Night Drive &amp; Stars</li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li>+27 (0)15 334 8800</li><li>reservations@elephantlodge.co.za</li><li>Limpopo Valley, South Africa</li><li onclick="showPage('contact')">Make an Enquiry &rarr;</li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 Elephant Lodge Private Reserve &middot; All rights reserved</p><p>Proudly South African &middot; Committed to Conservation</p></div>
+  </footer>
+</div>
+
+<!-- ==================== ABOUT ==================== -->
+<div id="page-about" class="page">
+
+  <div class="page-hero about-hero-bg">
+    <div>
+      <span class="section-eyebrow" style="color:var(--sand);">Who We Are</span>
+      <h1>About<br><em>Elephant Lodge</em></h1>
+      <p>Where conservation meets luxury hospitality in the Limpopo wilderness.</p>
+    </div>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-block">
+      <h3>Our Background</h3>
+      <p>Elephant Lodge was established in 2008 on the banks of the Limpopo River, South Africa. What began as a small eco-camp has grown into an award-winning luxury safari destination, consistently ranked among Africa's Top 10 Safari Lodges by Safari Digest and Cond&eacute; Nast Traveller.</p>
+      <p>Our 12,000-acre private reserve is home to free-roaming elephant herds, lion prides, leopard, rhino, buffalo, and over 350 bird species. Conservation is at the core of every decision we make.</p>
+    </div>
+    <div class="about-block">
+      <h3>Our Mission</h3>
+      <p>To provide world-class, sustainable safari experiences that deepen guests' connection with Africa's wilderness — while actively contributing to the conservation and protection of endangered wildlife and their habitats.</p>
+      <p>We believe that responsible tourism is one of the most powerful forces for lasting wildlife conservation on the continent. Every booking funds our work in the field.</p>
+    </div>
+    <div class="about-block">
+      <h3>Our Vision</h3>
+      <p>A future where wild elephants roam freely across expanded, fully protected corridors — and where every visitor to Elephant Lodge leaves as a passionate, lifelong ambassador for African wildlife conservation.</p>
+      <p>By 2030, we aim to expand our reserve by 5,000 acres and achieve fully carbon-neutral lodge operations.</p>
+    </div>
+    <div class="about-block">
+      <h3>Our Target Audience</h3>
+      <p>We welcome nature-loving travellers who seek meaningful, immersive experiences over mass tourism. Our typical guest values authenticity, sustainability, and the privilege of encountering wildlife on its own terms.</p>
+      <p>We cater to couples, families, solo explorers, wildlife photographers, and small corporate retreats — all united by a deep curiosity about the natural world.</p>
+    </div>
+  </div>
+
+  <div class="mission-band">
+    <h2>"Leave nothing but footprints. Take nothing but memories."</h2>
+    <div>
+      <p>Elephant Lodge operates under a strict low-impact philosophy. Our tented suites are constructed from reclaimed timber and locally sourced materials. We run on 80% solar power, use greywater recycling systems, and source 90% of food from nearby farms and our own lodge garden.</p>
+      <p>Ten percent of all revenue is reinvested directly into our wildlife anti-poaching unit, supporting 18 full-time rangers who protect the reserve around the clock, every day of the year.</p>
+    </div>
+  </div>
+
+  <div class="values-strip">
+    <div class="value-item"><span class="value-num">12k</span><p>Acres of protected wilderness</p></div>
+    <div class="value-item"><span class="value-num">400+</span><p>Elephants on the reserve</p></div>
+    <div class="value-item"><span class="value-num">16yrs</span><p>Of conservation experience</p></div>
+    <div class="value-item"><span class="value-num">10%</span><p>Revenue funds anti-poaching</p></div>
+  </div>
+
+  <div class="team-section">
+    <h2>The People Behind the Lodge</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-avatar" style="background-image:url('https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&q=80');"></div>
+        <h4>Amara Dube</h4>
+        <span>Founder &amp; Conservation Director</span>
+        <p>Wildlife biologist and conservationist with 20 years' experience in community-based conservation across southern Africa.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background-image:url('https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&q=80');"></div>
+        <h4>Naledi Sithole</h4>
+        <span>Head Safari Guide &amp; Ranger</span>
+        <p>FGASA Level 3 field guide with a specialist qualification in elephant behaviour. Born and raised in Limpopo Province.</p>
+      </div>
+      <div class="team-card">
+        <div class="team-avatar" style="background-image:url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&q=80');"></div>
+        <h4>James Koekemoer</h4>
+        <span>Lodge Manager &amp; Head Host</span>
+        <p>Hospitality professional with 15 years in luxury African lodges. James ensures every guest stay exceeds expectations.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand"><h3>Elephant Lodge</h3><p>A luxury eco-safari experience in the heart of Limpopo Valley. Where the wild finds its voice.</p></div>
+      <div class="footer-col"><h4>Navigate</h4><ul><li onclick="showPage('home')">Home</li><li onclick="showPage('about')">About Us</li><li onclick="showPage('services')">Experiences</li><li onclick="showPage('contact')">Contact</li></ul></div>
+      <div class="footer-col"><h4>Experiences</h4><ul><li>Big Five Game Drive</li><li>Elephant Encounter</li><li>Bush Walk &amp; Tracking</li><li>Night Drive &amp; Stars</li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li>+27 (0)15 334 8800</li><li>reservations@elephantlodge.co.za</li><li>Limpopo Valley, South Africa</li><li onclick="showPage('contact')">Make an Enquiry &rarr;</li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 Elephant Lodge Private Reserve &middot; All rights reserved</p><p>Proudly South African &middot; Committed to Conservation</p></div>
+  </footer>
+</div>
+
+<!-- ==================== SERVICES ==================== -->
+<div id="page-services" class="page">
+
+  <div class="page-hero services-hero-bg">
+    <div>
+      <span class="section-eyebrow" style="color:var(--sand);">What We Offer</span>
+      <h1>Stays &amp;<br><em>Experiences</em></h1>
+      <p>Accommodation, safaris, and curated wilderness adventures.</p>
+    </div>
+  </div>
+
+  <div class="accommodation-section">
+    <div class="section-header">
+      <span class="section-eyebrow">Accommodation</span>
+      <h2>Your Home in the Bush</h2>
+      <p>Three distinct accommodation categories, each designed to bring you closer to nature without sacrificing comfort.</p>
+    </div>
+    <div class="acc-grid">
+      <div class="acc-card">
+        <div class="acc-img acc-img-1"></div>
+        <div class="acc-body">
+          <h3>Classic Safari Tent</h3>
+          <span class="acc-tag">Sleeps 2 &middot; Garden View</span>
+          <p>Beautifully appointed tented rooms featuring en-suite bathrooms, handcrafted wooden furniture, and a private deck overlooking the acacia forest.</p>
+          <div class="price-tag"><span class="price-amount">R3,200</span><span class="price-unit">per person / night</span></div>
+        </div>
+      </div>
+      <div class="acc-card">
+        <div class="acc-img acc-img-2"></div>
+        <div class="acc-body">
+          <h3>River Suite</h3>
+          <span class="acc-tag">Sleeps 2 &middot; River View</span>
+          <p>Elevated above the Limpopo floodplain with floor-to-ceiling glass, a private plunge pool, outdoor shower, and breathtaking sunset views.</p>
+          <div class="price-tag"><span class="price-amount">R5,800</span><span class="price-unit">per person / night</span></div>
+        </div>
+      </div>
+      <div class="acc-card">
+        <div class="acc-img acc-img-3"></div>
+        <div class="acc-body">
+          <h3>Family Wilderness Villa</h3>
+          <span class="acc-tag">Sleeps 4&ndash;6 &middot; Private Reserve</span>
+          <p>A secluded, fully staffed villa with three bedrooms, private pool, and your own dedicated guide and vehicle for the entire stay.</p>
+          <div class="price-tag"><span class="price-amount">R18,500</span><span class="price-unit">per villa / night</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="acc-note">* All accommodation includes daily breakfast, dinner, and two guided game drives. Children under 6 stay free.</p>
+  </div>
+
+  <div class="safari-section">
+    <div class="section-header">
+      <span class="section-eyebrow" style="color:var(--clay);">Safari Options</span>
+      <h2>Choose Your Adventure</h2>
+      <p>Expert-guided experiences tailored to your pace and passion for the wild.</p>
+    </div>
+    <div class="safari-grid">
+      <div class="safari-card">
+        <div class="safari-badge">Most Popular</div>
+        <h3>Big Five Game Drive</h3>
+        <span class="safari-duration">3&ndash;4 hours &middot; Morning &amp; Afternoon departures</span>
+        <p>Track lion, leopard, elephant, rhino, and buffalo with expert rangers in an open-sided Land Cruiser. Includes a sundowner drinks stop at a scenic bush viewpoint.</p>
+        <ul class="safari-includes">
+          <li>FGASA-certified guide</li>
+          <li>Binoculars &amp; field guides provided</li>
+          <li>Morning coffee or afternoon sundowner</li>
+          <li>Maximum 6 guests per vehicle</li>
+        </ul>
+        <div class="safari-price price-tag"><span class="price-amount">R1,200</span><span class="price-unit">per person</span></div>
+      </div>
+      <div class="safari-card">
+        <h3>Elephant Encounter Walk</h3>
+        <span class="safari-duration">2 hours &middot; Sunrise departure</span>
+        <p>Walk alongside our resident elephant herd under the guidance of our elephant ecologist — a profound experience that will stay with you for a lifetime.</p>
+        <ul class="safari-includes">
+          <li>Led by elephant behaviour specialist</li>
+          <li>Maximum 4 guests (very intimate)</li>
+          <li>Conservation briefing included</li>
+          <li>Photography guidance on request</li>
+        </ul>
+        <div class="safari-price price-tag"><span class="price-amount">R2,500</span><span class="price-unit">per person</span></div>
+      </div>
+      <div class="safari-card">
+        <h3>Bush Walk &amp; Tracking</h3>
+        <span class="safari-duration">3 hours &middot; Early morning departure</span>
+        <p>Leave the vehicle behind and experience the bush on foot. Learn to read tracks, identify plants, and understand the ecosystem in extraordinary detail.</p>
+        <ul class="safari-includes">
+          <li>Armed &amp; qualified field guide</li>
+          <li>Maximum 8 guests</li>
+          <li>Hearty bush breakfast at trail's end</li>
+          <li>Suitable for adults and teens 14+</li>
+        </ul>
+        <div class="safari-price price-tag"><span class="price-amount">R980</span><span class="price-unit">per person</span></div>
+      </div>
+      <div class="safari-card">
+        <h3>Night Drive &amp; Star Safari</h3>
+        <span class="safari-duration">3 hours &middot; After-dinner departure</span>
+        <p>The African bush transforms after dark. Spot nocturnal predators by spotlight, then stop under a canopy of stars for a guided astronomy session in total darkness.</p>
+        <ul class="safari-includes">
+          <li>Spotlight &amp; thermal camera included</li>
+          <li>Professional telescope &amp; star charts</li>
+          <li>Hot drinks and bush snacks</li>
+          <li>Available year-round</li>
+        </ul>
+        <div class="safari-price price-tag"><span class="price-amount">R1,400</span><span class="price-unit">per person</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pricing-table-wrap">
+    <span class="section-eyebrow">Full Summary</span>
+    <h2>Pricing at a Glance</h2>
+    <p style="font-size:0.87rem; color:var(--bark);">All prices in South African Rand (ZAR). International guests see USD equivalent at checkout.</p>
+    <table>
+      <thead><tr><th>Package / Activity</th><th>Duration</th><th>Price (ZAR)</th><th>Included</th></tr></thead>
+      <tbody>
+        <tr><td>Classic Safari Tent</td><td>Per night</td><td>R3,200 pppn</td><td><span class="tag-incl">Breakfast</span><span class="tag-incl">Dinner</span><span class="tag-incl">2 Game Drives</span></td></tr>
+        <tr><td>River Suite</td><td>Per night</td><td>R5,800 pppn</td><td><span class="tag-incl">All Meals</span><span class="tag-incl">2 Game Drives</span><span class="tag-incl">Plunge Pool</span></td></tr>
+        <tr><td>Family Wilderness Villa</td><td>Per night</td><td>R18,500 per villa</td><td><span class="tag-incl">All Meals</span><span class="tag-incl">Private Guide</span><span class="tag-incl">Private Vehicle</span></td></tr>
+        <tr><td>Big Five Game Drive</td><td>3&ndash;4 hours</td><td>R1,200 pp</td><td><span class="tag-incl">Guide</span><span class="tag-incl">Refreshments</span></td></tr>
+        <tr><td>Elephant Encounter Walk</td><td>2 hours</td><td>R2,500 pp</td><td><span class="tag-incl">Specialist Guide</span><span class="tag-incl">Max 4 guests</span></td></tr>
+        <tr><td>Bush Walk &amp; Tracking</td><td>3 hours</td><td>R980 pp</td><td><span class="tag-incl">Armed Guide</span><span class="tag-incl">Bush Breakfast</span></td></tr>
+        <tr><td>Night Drive &amp; Star Safari</td><td>3 hours</td><td>R1,400 pp</td><td><span class="tag-incl">Spotlight</span><span class="tag-incl">Telescope</span><span class="tag-incl">Snacks</span></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.78rem; color:var(--clay); margin-top:1.2rem;">Prices valid January &ndash; December 2026. Peak season surcharge of 15% applies June&ndash;August and December&ndash;January. Group bookings of 10+ guests receive a 10% discount.</p>
+    <button class="btn btn-dark" style="margin-top:2rem;" onclick="showPage('contact')">Book an Experience &rarr;</button>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand"><h3>Elephant Lodge</h3><p>A luxury eco-safari experience in the heart of Limpopo Valley. Where the wild finds its voice.</p></div>
+      <div class="footer-col"><h4>Navigate</h4><ul><li onclick="showPage('home')">Home</li><li onclick="showPage('about')">About Us</li><li onclick="showPage('services')">Experiences</li><li onclick="showPage('contact')">Contact</li></ul></div>
+      <div class="footer-col"><h4>Experiences</h4><ul><li>Big Five Game Drive</li><li>Elephant Encounter</li><li>Bush Walk &amp; Tracking</li><li>Night Drive &amp; Stars</li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li>+27 (0)15 334 8800</li><li>reservations@elephantlodge.co.za</li><li>Limpopo Valley, South Africa</li><li onclick="showPage('contact')">Make an Enquiry &rarr;</li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 Elephant Lodge Private Reserve &middot; All rights reserved</p><p>Proudly South African &middot; Committed to Conservation</p></div>
+  </footer>
+</div>
+
+<!-- ==================== CONTACT ==================== -->
+<div id="page-contact" class="page">
+
+  <div class="page-hero contact-hero-bg">
+    <div>
+      <span class="section-eyebrow" style="color:var(--sand);">Get In Touch</span>
+      <h1>Contact<br><em>The Lodge</em></h1>
+      <p>We'd love to help you plan your perfect safari escape.</p>
+    </div>
+  </div>
+
+  <div class="contact-body">
+    <div class="contact-info">
+      <h2>Find Us</h2>
+      <div class="info-block">
+        <span class="info-label">Address</span>
+        <p>Elephant Lodge Private Reserve<br>Farm Rooibos 142, Limpopo Valley<br>Limpopo Province, South Africa<br>Postal Code: 0924</p>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Phone &amp; Email</span>
+        <p>+27 (0)15 334 8800<br>+27 (0)82 445 7700 (WhatsApp)<br>reservations@elephantlodge.co.za<br>info@elephantlodge.co.za</p>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Reservations Office Hours</span>
+        <div class="hours-grid">
+          <span class="day">Monday &ndash; Friday</span><span class="time">07:00 &ndash; 20:00</span>
+          <span class="day">Saturday</span><span class="time">08:00 &ndash; 18:00</span>
+          <span class="day">Sunday</span><span class="time">08:00 &ndash; 16:00</span>
+          <span class="day">Public Holidays</span><span class="time">09:00 &ndash; 14:00</span>
+        </div>
+        <p class="hours-note">The lodge itself operates 24 hours for all resident guests.</p>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Getting Here</span>
+        <p>Nearest airport: Polokwane International (PLZ) &mdash; approximately 2.5 hours by road.<br><br>We offer private road transfers from Polokwane and light aircraft charter arrivals from Johannesburg O.R. Tambo (JNB).</p>
+      </div>
+      <div class="info-block">
+        <span class="info-label">Follow Us</span>
+        <p>Instagram: @ElephantLodgeSA<br>Facebook: Elephant Lodge Limpopo<br>TripAdvisor: Elephant Lodge Private Reserve</p>
+      </div>
+    </div>
+
+    <div class="contact-form-wrap">
+      <h2>Make an Enquiry</h2>
+      <div class="form-row">
+        <div class="form-group"><label>First Name *</label><input type="text" id="fname" placeholder="Amara"></div>
+        <div class="form-group"><label>Last Name *</label><input type="text" id="lname" placeholder="Dube"></div>
+      </div>
+      <div class="form-group"><label>Email Address *</label><input type="email" id="email" placeholder="amara@example.com"></div>
+      <div class="form-group"><label>Phone Number</label><input type="tel" id="phone" placeholder="+27 82 000 0000"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Arrival Date</label><input type="date" id="arrival"></div>
+        <div class="form-group"><label>Departure Date</label><input type="date" id="departure"></div>
+      </div>
+      <div class="form-group">
+        <label>Number of Guests</label>
+        <select id="guests">
+          <option value="">Select number of guests</option>
+          <option>1 Guest</option><option>2 Guests</option><option>3&ndash;4 Guests</option>
+          <option>5&ndash;6 Guests</option><option>7&ndash;10 Guests</option><option>Group (10+)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Type of Enquiry</label>
+        <select id="enquiry-type">
+          <option value="">Select enquiry type</option>
+          <option>Accommodation Booking</option><option>Safari Activity Booking</option>
+          <option>Group / Corporate Booking</option><option>Honeymoon / Special Occasion</option>
+          <option>General Information</option><option>Transfer Arrangements</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Message *</label><textarea id="message" placeholder="Tell us about your ideal safari experience, any special requirements, dietary needs, or questions you may have..."></textarea></div>
+      <button class="form-submit" onclick="submitForm()">Send Enquiry</button>
+      <p style="font-size:0.75rem; color:var(--clay); margin-top:0.8rem; text-align:center;">We typically respond within 24 hours during operating hours.</p>
+    </div>
+  </div>
+
+  <div class="map-section">
+    <div class="map-pin-card">
+      <h3>&#128205; Elephant Lodge Private Reserve</h3>
+      <p>Farm Rooibos 142, Limpopo Valley, South Africa</p>
+      <small>Coordinates: S 23&deg;52'14" &middot; E 29&deg;41'08"</small>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand"><h3>Elephant Lodge</h3><p>A luxury eco-safari experience in the heart of Limpopo Valley. Where the wild finds its voice.</p></div>
+      <div class="footer-col"><h4>Navigate</h4><ul><li onclick="showPage('home')">Home</li><li onclick="showPage('about')">About Us</li><li onclick="showPage('services')">Experiences</li><li onclick="showPage('contact')">Contact</li></ul></div>
+      <div class="footer-col"><h4>Experiences</h4><ul><li>Big Five Game Drive</li><li>Elephant Encounter</li><li>Bush Walk &amp; Tracking</li><li>Night Drive &amp; Stars</li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul><li>+27 (0)15 334 8800</li><li>reservations@elephantlodge.co.za</li><li>Limpopo Valley, South Africa</li><li>@ElephantLodgeSA</li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2026 Elephant Lodge Private Reserve &middot; All rights reserved</p><p>Proudly South African &middot; Committed to Conservation</p></div>
+  </footer>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  &#10022; Thank you for your enquiry!<br>
+  <span style="font-size:0.78rem; color:var(--dusk);">We'll be in touch within 24 hours.</span>
+</div>
+
+<script>
+function showPage(name) {
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+  var links = document.querySelectorAll('.nav-links li a');
+  for (var j = 0; j < links.length; j++) links[j].classList.remove('active');
+  document.getElementById('page-' + name).classList.add('active');
+  var link = document.getElementById('nav-' + name);
+  if (link) link.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function submitForm() {
+  var fname = document.getElementById('fname').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var msg   = document.getElementById('message').value.trim();
+  if (!fname || !email || !msg) {
+    alert('Please fill in your first name, email address, and message before submitting.');
+    return;
+  }
+  var toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 5000);
+  var fields = ['fname','lname','email','phone','arrival','departure','message'];
+  for (var i = 0; i < fields.length; i++) document.getElementById(fields[i]).value = '';
+  document.getElementById('guests').selectedIndex = 0;
+  document.getElementById('enquiry-type').selectedIndex = 0;
+}
+</script>
+</body>
+</html>
